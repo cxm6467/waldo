@@ -5,7 +5,7 @@
 Run this once from any directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/caboose-mcp/waldo/demo/dual-domain/setup-waldo.sh | bash
+curl -fsSL https://raw.githubusercontent.com/caboose-mcp/waldo/main/setup-waldo.sh | bash
 ```
 
 Or from the repo:
