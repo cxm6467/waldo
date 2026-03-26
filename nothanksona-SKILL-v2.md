@@ -310,7 +310,7 @@ View or edit the current code style profile.
 
 1. Read `~/.claude/personas/code/coding-style.json`
 2. Pretty-print the profile — indentation, naming, line length, imports, comments, functions, error handling, types
-3. Ask: "Want to edit any of these? You can modify `~/.claude/personas/code/coding-style.json` to update the profile."
+3. Ask: "Want to edit any of these? (run `/nothanksona edit code-style` to modify)"
 
 ### `/nothanksona code-learn`
 
