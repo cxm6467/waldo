@@ -1,4 +1,4 @@
-# nothanksona — Cross-Machine Persona Sync
+# waldo — Cross-Machine Persona Sync
 
 A comprehensive persona management system for Claude Code that persists voice/tone preferences, learns over time, and syncs across machines via S3.
 
@@ -20,7 +20,7 @@ cat > ~/.claude/personas/agent/default.json << 'EOF'
   "meta": {
     "name": "default",
     "description": "Neutral baseline persona",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "created_at": "2026-03-26T00:00:00Z"
   },
   "tone": {
@@ -46,9 +46,9 @@ cat > ~/.claude/personas/agent/default.json << 'EOF'
 EOF
 ```
 
-### 3. Copy Hooks to ~/.claude/hooks/nothanksona/
+### 3. Copy Hooks to ~/.claude/hooks/waldo/
 
-From `nothanksona-SKILL-v5.md` or check the `/home/caboose/.claude/hooks/nothanksona/` directory:
+From `waldo-SKILL-v5.md` or check the `/home/caboose/.claude/hooks/waldo/` directory:
 
 - `inject-persona.sh` — UserPromptSubmit hook for injecting persona context
 - `session-counter.sh` — Tracks messages, triggers learning nudge at 50
@@ -70,7 +70,7 @@ Add SessionStart hook for S3 pull and PostToolUse hook for S3 push:
         "hooks": [
           {
             "type": "command",
-            "command": "/home/caboose/.claude/hooks/nothanksona/s3-sync.sh pull",
+            "command": "/home/caboose/.claude/hooks/waldo/s3-sync.sh pull",
             "timeout": 15,
             "async": true
           }
@@ -83,7 +83,7 @@ Add SessionStart hook for S3 pull and PostToolUse hook for S3 push:
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command // empty' | grep -q 'accumulate-deltas' && /home/caboose/.claude/hooks/nothanksona/s3-sync.sh push 2>/dev/null || true",
+            "command": "jq -r '.tool_input.command // empty' | grep -q 'accumulate-deltas' && /home/caboose/.claude/hooks/waldo/s3-sync.sh push 2>/dev/null || true",
             "timeout": 15,
             "async": true
           }
@@ -116,19 +116,19 @@ aws s3api create-bucket --bucket my-personas --region us-east-1
 Apply temporary tone adjustments:
 
 ```bash
-/nothanksona mood make me sound happier
-/nothanksona mood pissed
-/nothanksona mood more professional
+/waldo mood make me sound happier
+/waldo mood pissed
+/waldo mood more professional
 ```
 
-Session-only by default. Bake into persona permanently with `/nothanksona mood save`.
+Session-only by default. Bake into persona permanently with `/waldo mood save`.
 
 ### 📚 Incremental Learning
 
 Analyze conversation patterns and suggest persona updates:
 
 ```bash
-/nothanksona learn
+/waldo learn
 ```
 
 Proposed updates show confidence scores. Apply with `y` → merges deltas into persona JSON with 30-day time-decay weighting.
@@ -136,7 +136,7 @@ Proposed updates show confidence scores. Apply with `y` → merges deltas into p
 ### 🔄 Cross-Machine Sync
 
 - **SessionStart**: Auto-pulls latest personas from S3
-- **After `/nothanksona learn --accumulate`**: Auto-pushes updated personas to S3
+- **After `/waldo learn --accumulate`**: Auto-pushes updated personas to S3
 - Graceful fallback if AWS not configured
 
 ### ⚡ Token Optimization
@@ -148,8 +148,8 @@ Persona context reduces from ~200 tokens (first session) to ~10 tokens (subseque
 Scan repositories for coding conventions:
 
 ```bash
-/nothanksona code-scan /path/to/repo
-/nothanksona code-style
+/waldo code-scan /path/to/repo
+/waldo code-style
 ```
 
 Stored at `~/.claude/personas/code/coding-style.json` (separate from agent domain).
@@ -158,12 +158,12 @@ Stored at `~/.claude/personas/code/coding-style.json` (separate from agent domai
 
 ```
 ~/.claude/personas/
-├── .active                    # Current persona (e.g., "agent/nothanksona")
+├── .active                    # Current persona (e.g., "agent/waldo")
 ├── .mood                      # Session-only mood overlay (optional)
 ├── .session-count             # Messages this session (auto-reset)
 ├── agent/
 │   ├── default.json           # Baseline neutral persona
-│   ├── nothanksona.json       # Example persona (casual, direct)
+│   ├── waldo.json       # Example persona (casual, direct)
 │   └── .deltas                # JSONL incremental learning deltas
 └── code/
     ├── coding-style.json      # Code conventions template
@@ -175,12 +175,12 @@ Stored at `~/.claude/personas/code/coding-style.json` (separate from agent domai
 **Machine A (Mac):**
 ```bash
 # 1. Use a custom persona
-/nothanksona use agent/nothanksona
+/waldo use agent/waldo
 
 # 2. Have a conversation...
 
 # 3. Learn and update
-/nothanksona learn
+/waldo learn
 → Suggested: humor 0.65 → 0.75, directness 0.85 → 0.9
 → Apply? (y/n)
 → yes
@@ -193,9 +193,9 @@ Stored at `~/.claude/personas/code/coding-style.json` (separate from agent domai
 # SessionStart hook auto-pulls from S3
 
 # 2. Your persona from Machine A is now active
-/nothanksona list
+/waldo list
 → agent/default
-→ agent/nothanksona  [active]  ← Updated with your learning
+→ agent/waldo  [active]  ← Updated with your learning
 
 # 3. Continue with latest persona
 ```
@@ -204,20 +204,20 @@ Stored at `~/.claude/personas/code/coding-style.json` (separate from agent domai
 
 | Command | Purpose |
 |---------|---------|
-| `/nothanksona use <name>` | Switch active persona |
-| `/nothanksona list` | Show all personas (mark active) |
-| `/nothanksona new <name>` | Create persona interactively |
-| `/nothanksona edit <name>` | Modify existing persona |
-| `/nothanksona export <name>` | Export as JSON (shareable) |
-| `/nothanksona import` | Import from pasted JSON |
-| `/nothanksona slack-import` | Generate from Slack messages |
-| `/nothanksona mood <desc>` | Temporary tone adjustment |
-| `/nothanksona mood reset` | Clear mood overlay |
-| `/nothanksona mood save` | Bake mood into persona |
-| `/nothanksona learn` | Analyze session, suggest updates |
-| `/nothanksona learn --accumulate` | Merge deltas into persona (triggers S3 push) |
-| `/nothanksona code-scan <path>` | Detect code style conventions |
-| `/nothanksona code-style` | View current code style |
+| `/waldo use <name>` | Switch active persona |
+| `/waldo list` | Show all personas (mark active) |
+| `/waldo new <name>` | Create persona interactively |
+| `/waldo edit <name>` | Modify existing persona |
+| `/waldo export <name>` | Export as JSON (shareable) |
+| `/waldo import` | Import from pasted JSON |
+| `/waldo slack-import` | Generate from Slack messages |
+| `/waldo mood <desc>` | Temporary tone adjustment |
+| `/waldo mood reset` | Clear mood overlay |
+| `/waldo mood save` | Bake mood into persona |
+| `/waldo learn` | Analyze session, suggest updates |
+| `/waldo learn --accumulate` | Merge deltas into persona (triggers S3 push) |
+| `/waldo code-scan <path>` | Detect code style conventions |
+| `/waldo code-style` | View current code style |
 
 ## Mood Mapping (Natural Language)
 
@@ -268,7 +268,7 @@ Stored at `~/.claude/personas/code/coding-style.json` (separate from agent domai
 
 ### Persona not injecting?
 ```bash
-echo '{}' | bash ~/.claude/hooks/nothanksona/inject-persona.sh
+echo '{}' | bash ~/.claude/hooks/waldo/inject-persona.sh
 # Should output JSON with `additionalContext` field
 ```
 
@@ -283,21 +283,21 @@ aws --profile default sts get-caller-identity
 Set counter manually and test:
 ```bash
 printf '49' > ~/.claude/personas/.session-count
-echo '{}' | bash ~/.claude/hooks/nothanksona/session-counter.sh
+echo '{}' | bash ~/.claude/hooks/waldo/session-counter.sh
 # Should see systemMessage nudge at count=50
 ```
 
 ### Deltas not merging?
 Run accumulate manually:
 ```bash
-bash ~/.claude/hooks/nothanksona/accumulate-deltas.sh agent nothanksona 30
+bash ~/.claude/hooks/waldo/accumulate-deltas.sh agent waldo 30
 ```
 
 ## Token Optimization Details
 
 **Session 1** (~200 tokens):
 ```
-[PERSONA: nothanksona]
+[PERSONA: waldo]
 Tone: formality 0.2, directness 0.85, humor 0.65, hedging 0.1, warmth 0.55
 Verbosity: response_length concise, reading_level casual
 Voice: custom_phrases: ["yea breh"], avoid_words: []
@@ -306,7 +306,7 @@ Voice: custom_phrases: ["yea breh"], avoid_words: []
 
 **Session 2+** (~10 tokens):
 ```
-[PERSONA FINGERPRINT: nk:nothanksona:1.0:f3d6b2a1e9c4]
+[PERSONA FINGERPRINT: nk:waldo:1.0:f3d6b2a1e9c4]
 (Model recognizes shorthand from Session 1)
 ```
 
@@ -314,8 +314,8 @@ Voice: custom_phrases: ["yea breh"], avoid_words: []
 
 ## See Also
 
-- `nothanksona-SKILL-v5.md` — Full skill documentation
-- `/home/caboose/.claude/hooks/nothanksona/` — Hook scripts
+- `waldo-SKILL-v5.md` — Full skill documentation
+- `/home/caboose/.claude/hooks/waldo/` — Hook scripts
 - `~/.claude/personas/` — Persona storage
 - `~/.claude/settings.json` — Hook configuration
 

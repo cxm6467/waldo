@@ -1,6 +1,6 @@
 #!/bin/bash
-# nothanksona — Cross-machine persona sync setup
-# One-liner: curl -fsSL https://raw.githubusercontent.com/cxm6467/waldo/demo/dual-domain/setup-nothanksona.sh | bash
+# waldo — Cross-machine persona sync setup
+# One-liner: curl -fsSL https://raw.githubusercontent.com/caboose-mcp/waldo/demo/dual-domain/setup-waldo.sh | bash
 
 set -e
 
@@ -12,7 +12,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  nothanksona — Persona Sync Setup      ║${NC}"
+echo -e "${BLUE}║  waldo — Persona Sync Setup      ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
 echo
 
@@ -118,19 +118,19 @@ echo
 # 6. Setup hook scripts
 echo -e "${YELLOW}Setting up hook scripts...${NC}"
 
-HOOKS_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/nothanksona"
+HOOKS_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/waldo"
 mkdir -p "$HOOKS_DIR"
 
 # Try to get from local repo first, then fallback to download
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-REPO_HOOKS="$SCRIPT_DIR/.claude/hooks/nothanksona"
+REPO_HOOKS="$SCRIPT_DIR/.claude/hooks/waldo"
 
 if [ -d "$REPO_HOOKS" ]; then
   echo "  Using local repo hooks..."
   cp "$REPO_HOOKS"/*.sh "$HOOKS_DIR/" 2>/dev/null || true
 else
   echo "  Downloading hooks from GitHub..."
-  REPO_URL="https://raw.githubusercontent.com/cxm6467/waldo/demo/dual-domain/.claude/hooks/nothanksona"
+  REPO_URL="https://raw.githubusercontent.com/caboose-mcp/waldo/demo/dual-domain/.claude/hooks/waldo"
 
   HOOKS=(
     "inject-persona.sh"
@@ -255,20 +255,20 @@ fi
 echo
 
 echo -e "${BLUE}Quick Start:${NC}"
-echo "  1. Import nothanksona skill:"
-echo "     /nothanksona import"
-echo "     (paste from: https://github.com/cxm6467/waldo)"
+echo "  1. Import waldo skill:"
+echo "     /waldo import"
+echo "     (paste from: https://github.com/caboose-mcp/waldo)"
 echo
 echo "  2. Create a persona:"
-echo "     /nothanksona new my-voice"
+echo "     /waldo new my-voice"
 echo
 echo "  3. Switch persona:"
-echo "     /nothanksona use agent/my-voice"
+echo "     /waldo use agent/my-voice"
 echo
 echo "  4. Learn from conversation:"
-echo "     /nothanksona learn"
+echo "     /waldo learn"
 echo
 echo -e "${BLUE}Next:${NC}"
 echo "  • Full docs: ${PERSONAS_DIR}/../../../dev/waldo/NOTHANKSONA-SETUP.md"
-echo "  • GitHub: https://github.com/cxm6467/waldo"
+echo "  • GitHub: https://github.com/caboose-mcp/waldo"
 echo

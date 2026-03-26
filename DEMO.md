@@ -1,11 +1,11 @@
-# nothanksona Demo — Complete End-to-End
+# waldo Demo — Complete End-to-End
 
 ## Installation
 
 **One command (any machine, any AI tool):**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/cxm6467/waldo/demo/dual-domain/setup-nothanksona.sh | bash
+curl -fsSL https://raw.githubusercontent.com/caboose-mcp/waldo/demo/dual-domain/setup-waldo.sh | bash
 ```
 
 What happens:
@@ -14,7 +14,7 @@ What happens:
 ✓ Created: ~/.claude/personas/{agent,code}
 ✓ Default persona created
 ✓ Active persona: agent/default
-✓ Hook scripts: ~/.claude/hooks/nothanksona
+✓ Hook scripts: ~/.claude/hooks/waldo
 ✓ Learning deltas initialized
 
 Setup Complete!
@@ -28,7 +28,7 @@ Setup Complete!
 
 **Command:**
 ```bash
-/nothanksona slack-import
+/waldo slack-import
 ```
 
 **What you do:**
@@ -62,7 +62,7 @@ What should I name this persona?
 
 **Command:**
 ```bash
-/nothanksona use agent/my-voice
+/waldo use agent/my-voice
 ```
 
 **What happens:**
@@ -70,7 +70,7 @@ Every response now uses your exact tone, formality, humor, warmth levels.
 
 **You can check:**
 ```bash
-/nothanksona list
+/waldo list
 ```
 
 ```
@@ -86,28 +86,28 @@ Want to sound different just for this conversation?
 
 **Make it happier:**
 ```bash
-/nothanksona mood make me sound happier
+/waldo mood make me sound happier
 ```
 
 Response becomes: +0.2 humor, +0.2 warmth (session-only)
 
 **Make it professional:**
 ```bash
-/nothanksona mood more professional
+/waldo mood more professional
 ```
 
 Response becomes: +0.3 formality, -0.2 humor
 
 **Get pissed:**
 ```bash
-/nothanksona mood pissed
+/waldo mood pissed
 ```
 
 Response becomes: +0.3 directness, -0.2 warmth
 
 **Clear it:**
 ```bash
-/nothanksona mood reset
+/waldo mood reset
 ```
 
 Back to base persona.
@@ -141,7 +141,7 @@ Notice: casual tone, direct, no hedging, gets to the point. That's your persona.
 After talking for 20–50 messages, run:
 
 ```bash
-/nothanksona learn
+/waldo learn
 ```
 
 Claude analyzes *this session* and suggests updates:
@@ -168,7 +168,7 @@ Your persona evolved based on *your actual conversation*.
 
 **Machine A (MacBook):**
 - Used persona for 30 min
-- Ran `/nothanksona learn --accumulate`
+- Ran `/waldo learn --accumulate`
 - Auto-pushed to S3
 
 **Machine B (Linux, 1 hour later):**
@@ -177,7 +177,7 @@ Your persona evolved based on *your actual conversation*.
 - Your persona arrived with all updates
 
 ```bash
-/nothanksona list
+/waldo list
 ```
 
 ```
@@ -194,7 +194,7 @@ Made a fire persona? Share it.
 
 **Export:**
 ```bash
-/nothanksona export agent/my-voice
+/waldo export agent/my-voice
 ```
 
 Output (copy this):
@@ -203,7 +203,7 @@ Output (copy this):
   "meta": {
     "name": "my-voice",
     "description": "Slack-derived persona",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "created_at": "2026-03-26T12:00:00Z"
   },
   "tone": {
@@ -219,7 +219,7 @@ Output (copy this):
 
 **Friend imports:**
 ```bash
-/nothanksona import
+/waldo import
 ```
 
 Pastes JSON → Done. They now have your voice.
@@ -230,17 +230,17 @@ Pastes JSON → Done. They now have your voice.
 
 | Command | Purpose |
 |---------|---------|
-| `/nothanksona list` | Show all personas + active |
-| `/nothanksona use <name>` | Activate a persona |
-| `/nothanksona new <name>` | Create manually |
-| `/nothanksona slack-import` | Generate from Slack messages |
-| `/nothanksona mood <desc>` | Temp tone (happier, pissed, professional) |
-| `/nothanksona mood save` | Keep mood forever |
-| `/nothanksona mood reset` | Clear temp mood |
-| `/nothanksona learn` | Analyze session, suggest updates |
-| `/nothanksona code-scan /path` | Detect code style |
-| `/nothanksona export <name>` | Share persona as JSON |
-| `/nothanksona import` | Import persona from JSON |
+| `/waldo list` | Show all personas + active |
+| `/waldo use <name>` | Activate a persona |
+| `/waldo new <name>` | Create manually |
+| `/waldo slack-import` | Generate from Slack messages |
+| `/waldo mood <desc>` | Temp tone (happier, pissed, professional) |
+| `/waldo mood save` | Keep mood forever |
+| `/waldo mood reset` | Clear temp mood |
+| `/waldo learn` | Analyze session, suggest updates |
+| `/waldo code-scan /path` | Detect code style |
+| `/waldo export <name>` | Share persona as JSON |
+| `/waldo import` | Import persona from JSON |
 
 ---
 
@@ -249,21 +249,21 @@ Pastes JSON → Done. They now have your voice.
 **Day 1 (Mac):**
 ```bash
 # Setup
-curl -fsSL https://raw.githubusercontent.com/cxm6467/waldo/demo/dual-domain/setup-nothanksona.sh | bash
+curl -fsSL https://raw.githubusercontent.com/caboose-mcp/waldo/demo/dual-domain/setup-waldo.sh | bash
 
 # Create persona
-/nothanksona slack-import
+/waldo slack-import
 (paste Slack messages...)
 → Save as: chris-marasco
 
 # Use it
-/nothanksona use agent/chris-marasco
+/waldo use agent/chris-marasco
 
 # Chat for 30 min
 (...)
 
 # Learn
-/nothanksona learn
+/waldo learn
 → Apply? y
 ```
 
@@ -273,7 +273,7 @@ curl -fsSL https://raw.githubusercontent.com/cxm6467/waldo/demo/dual-domain/setu
 (SessionStart hook auto-pulls from S3)
 
 # Your persona is here with yesterday's updates
-/nothanksona list
+/waldo list
 → agent/chris-marasco [active]
 
 # Continue as if you never left
@@ -284,8 +284,8 @@ curl -fsSL https://raw.githubusercontent.com/cxm6467/waldo/demo/dual-domain/setu
 ```bash
 # Same setup (persona already synced)
 # Same skill commands work
-/nothanksona mood pissed
-/nothanksona learn
+/waldo mood pissed
+/waldo learn
 ```
 
 Same voice everywhere.
@@ -336,7 +336,7 @@ Suggestion: humor 0.55 → 0.68
 Session 2: "You led with conclusions 92% of the time"
 Suggestion: directness 0.80 → 0.87
 
-User runs: /nothanksona learn --accumulate
+User runs: /waldo learn --accumulate
 Merge with decay weighting ↓
 
 Persona evolves gradually.
@@ -372,6 +372,6 @@ Your voice in your code. Everywhere. Always learning.
 
 ---
 
-**Get started:** https://github.com/cxm6467/waldo/tree/demo/dual-domain
+**Get started:** https://github.com/caboose-mcp/waldo/tree/demo/dual-domain
 **Setup script:** `curl -fsSL ... | bash`
 **Time to first persona:** 5 minutes

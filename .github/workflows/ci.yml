@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install meml
+        run: go install github.com/caboose-mcp/meml/cmd/meml@latest
+
+      - name: Add Go bin to PATH
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Validate MEML files
+        run: |
+          for file in $(find . -name "*.meml" -type f); do
+            echo "Validating $file..."
+            meml validate "$file" || exit 1
+          done
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Check shell scripts
+        run: |
+          shellcheck setup-waldo.sh .claude/hooks/waldo/*.sh || true

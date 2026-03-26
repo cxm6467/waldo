@@ -1,18 +1,18 @@
-# nothanksona — 5-Minute Setup + Usage
+# waldo — 5-Minute Setup + Usage
 
 ## Setup (One Command)
 
 Run this once from any directory:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/cxm6467/waldo/demo/dual-domain/setup-nothanksona.sh | bash
+curl -fsSL https://raw.githubusercontent.com/caboose-mcp/waldo/demo/dual-domain/setup-waldo.sh | bash
 ```
 
 Or from the repo:
 
 ```bash
 cd /path/to/waldo
-bash setup-nothanksona.sh
+bash setup-waldo.sh
 ```
 
 What it does:
@@ -30,13 +30,13 @@ What it does:
 ### 1. List Your Personas
 
 ```bash
-/nothanksona list
+/waldo list
 ```
 
 Output:
 ```
 agent/default: Neutral baseline persona [active]
-agent/nothanksona: Chill, snarky, direct (Example)
+agent/waldo: Chill, snarky, direct (Example)
 ```
 
 ### 2. Create a New Persona from Your Slack
@@ -44,7 +44,7 @@ agent/nothanksona: Chill, snarky, direct (Example)
 Paste 10+ Slack messages you wrote:
 
 ```bash
-/nothanksona slack-import
+/waldo slack-import
 ```
 
 Claude analyzes tone, gives you persona scores, saves it.
@@ -62,7 +62,7 @@ Save as: my-voice
 ### 3. Switch to Your Persona
 
 ```bash
-/nothanksona use agent/my-voice
+/waldo use agent/my-voice
 ```
 
 Now every response uses your tone + voice.
@@ -72,27 +72,27 @@ Now every response uses your tone + voice.
 Want to sound different for one conversation?
 
 ```bash
-/nothanksona mood make me sound happier
+/waldo mood make me sound happier
 ```
 
 ```
-/nothanksona mood pissed
+/waldo mood pissed
 ```
 
 ```bash
-/nothanksona mood more professional
+/waldo mood more professional
 ```
 
 Session-only. To keep it permanently:
 
 ```bash
-/nothanksona mood save
+/waldo mood save
 ```
 
 Clear it anytime:
 
 ```bash
-/nothanksona mood reset
+/waldo mood reset
 ```
 
 ### 5. Learn from Your Conversation
@@ -100,7 +100,7 @@ Clear it anytime:
 After talking for a bit, Claude notices patterns:
 
 ```bash
-/nothanksona learn
+/waldo learn
 ```
 
 Output:
@@ -122,13 +122,13 @@ If S3 is configured, it auto-pushes. Other machines auto-pull on SessionStart.
 Scan a repo for conventions:
 
 ```bash
-/nothanksona code-scan /path/to/my-project
+/waldo code-scan /path/to/my-project
 ```
 
 Claude finds indentation, naming patterns, line length, imports, error handling, types.
 
 ```bash
-/nothanksona code-style
+/waldo code-style
 ```
 
 Shows what it learned. Claude follows it from now on.
@@ -141,17 +141,17 @@ Shows what it learned. Claude follows it from now on.
 
 ```bash
 # 1. Create persona from your Slack
-/nothanksona slack-import
+/waldo slack-import
 → Save as: chris-marasco
 
 # 2. Use it
-/nothanksona use agent/chris-marasco
+/waldo use agent/chris-marasco
 
 # 3. Have a conversation
 (chat with Claude...)
 
 # 4. Learn from it
-/nothanksona learn
+/waldo learn
 → Apply? (y/n) → yes
 → Auto-pushes to S3
 ```
@@ -162,7 +162,7 @@ Shows what it learned. Claude follows it from now on.
 # SessionStart hook auto-pulls from S3
 
 # Your persona from MacBook is active
-/nothanksona list
+/waldo list
 → agent/chris-marasco [active] ← with updates!
 
 # Keep going with your exact tone
@@ -180,18 +180,18 @@ Shows what it learned. Claude follows it from now on.
 
 | Command | What It Does |
 |---------|-------------|
-| `/nothanksona list` | Show all personas, mark active |
-| `/nothanksona use <name>` | Switch persona |
-| `/nothanksona new <name>` | Create manually |
-| `/nothanksona slack-import` | Generate from Slack messages |
-| `/nothanksona mood <desc>` | Temp tone (happier, pissed, professional, etc.) |
-| `/nothanksona mood save` | Keep mood forever |
-| `/nothanksona mood reset` | Clear mood |
-| `/nothanksona learn` | Analyze conversation, suggest updates |
-| `/nothanksona code-scan <path>` | Detect code style |
-| `/nothanksona code-style` | View code conventions |
-| `/nothanksona export <name>` | Share persona as JSON |
-| `/nothanksona import` | Paste JSON from someone else |
+| `/waldo list` | Show all personas, mark active |
+| `/waldo use <name>` | Switch persona |
+| `/waldo new <name>` | Create manually |
+| `/waldo slack-import` | Generate from Slack messages |
+| `/waldo mood <desc>` | Temp tone (happier, pissed, professional, etc.) |
+| `/waldo mood save` | Keep mood forever |
+| `/waldo mood reset` | Clear mood |
+| `/waldo learn` | Analyze conversation, suggest updates |
+| `/waldo code-scan <path>` | Detect code style |
+| `/waldo code-style` | View code conventions |
+| `/waldo export <name>` | Share persona as JSON |
+| `/waldo import` | Paste JSON from someone else |
 
 ---
 
@@ -219,9 +219,9 @@ Delete `~/.claude/personas/.active` or switch to a neutral persona.
 **Q: Can I share personas?**
 Yeah:
 ```bash
-/nothanksona export chris-marasco
+/waldo export chris-marasco
 # Copy JSON → send to friend
-# Friend runs: /nothanksona import
+# Friend runs: /waldo import
 # Friend pastes JSON
 ```
 
@@ -233,7 +233,7 @@ Backups exist: `~/.claude/personas/agent/my-voice.json.backup.TIMESTAMP`
 
 **Q: Can I reset to default?**
 ```bash
-/nothanksona use agent/default
+/waldo use agent/default
 ```
 
 ---
@@ -242,7 +242,7 @@ Backups exist: `~/.claude/personas/agent/my-voice.json.backup.TIMESTAMP`
 
 **Persona not applying?**
 ```bash
-echo '{}' | bash ~/.claude/hooks/nothanksona/inject-persona.sh
+echo '{}' | bash ~/.claude/hooks/waldo/inject-persona.sh
 # Should output JSON with persona context
 ```
 
@@ -267,16 +267,16 @@ ls ~/.claude/personas/agent/*.backup.*
 ## Next Steps
 
 1. **Run setup:** `curl -fsSL ... | bash`
-2. **Create persona:** `/nothanksona slack-import` (or `/nothanksona new my-voice`)
-3. **Use it:** `/nothanksona use agent/my-voice`
+2. **Create persona:** `/waldo slack-import` (or `/waldo new my-voice`)
+3. **Use it:** `/waldo use agent/my-voice`
 4. **Chat**
-5. **Learn:** `/nothanksona learn` → apply deltas
+5. **Learn:** `/waldo learn` → apply deltas
 6. **Sync to other machines:** Done automatically if S3 configured
 
 That's it. You're done.
 
 ---
 
-**Full docs:** [NOTHANKSONA-SETUP.md](NOTHANKSONA-SETUP.md)
-**Skill reference:** [nothanksona-SKILL-v5.md](nothanksona-SKILL-v5.md)
-**GitHub:** https://github.com/cxm6467/waldo
+**Full docs:** [WALDO-SETUP.md](WALDO-SETUP.md)
+**Skill reference:** [waldo-SKILL-v5.md](waldo-SKILL-v5.md)
+**GitHub:** https://github.com/caboose-mcp/waldo

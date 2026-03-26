@@ -1,10 +1,10 @@
 ---
-name: nothanksona
-description: Manage Claude response personas — agent (tone, voice) and code (style, conventions). Subcommands: use, list, edit, export, import, slack-import, mood, learn (agent); code-scan, code-style (code). Use when switching personas, tweaking voice/tone, analyzing Slack, applying mood overlays, learning from session (agent), or scanning/viewing code style conventions (code).
+name: waldo
+description: Manage Claude response personas — tone, verbosity, voice style, VTT/caption settings. Subcommands: use, list, new, edit, export, import, slack-import, mood, learn. Use when user wants to change how Claude talks, set a response style, switch personas, create a new persona from scratch, import one from Slack, tweak mood with natural language, or analyze session to update persona.
 user_invocable: true
 ---
 
-# nothanksona
+# waldo
 
 Manage response personas that shape Claude's tone, verbosity, and voice style.
 
@@ -14,7 +14,7 @@ All personas live at `~/.claude/personas/<name>.json`. The active persona name i
 
 ## Subcommands
 
-### `/nothanksona use <name>`
+### `/waldo use <name>`
 
 Switch the active persona.
 
@@ -26,7 +26,7 @@ Switch the active persona.
    ```
 4. Confirm: "Persona switched to <name>. It will apply starting from your next message."
 
-### `/nothanksona list`
+### `/waldo list`
 
 List all available personas.
 
@@ -41,7 +41,7 @@ List all available personas.
    ```
 4. Present as a formatted list. Mark the active persona with `[active]`.
 
-### `/nothanksona new <name>`
+### `/waldo new <name>`
 
 Create a new persona interactively.
 
@@ -55,7 +55,7 @@ Create a new persona interactively.
 3. Write to `~/.claude/personas/<name>.json`.
 4. Ask if the user wants to activate it now.
 
-### `/nothanksona edit <name>`
+### `/waldo edit <name>`
 
 Edit an existing persona.
 
@@ -67,15 +67,15 @@ Edit an existing persona.
 3. Apply changes with the Edit tool (surgical field updates, not full rewrites).
 4. Confirm what changed.
 
-### `/nothanksona export <name>`
+### `/waldo export <name>`
 
 Export a persona to a shareable JSON snippet.
 
 1. Read `~/.claude/personas/<name>.json`.
 2. Print the full JSON contents in a code block so the user can copy it.
-3. Note: "You can share this with others. They can import it with `/nothanksona import`."
+3. Note: "You can share this with others. They can import it with `/waldo import`."
 
-### `/nothanksona import`
+### `/waldo import`
 
 Import a persona from JSON the user pastes.
 
@@ -86,13 +86,13 @@ Import a persona from JSON the user pastes.
 5. Write to `~/.claude/personas/<name>.json`.
 6. Confirm and ask if they want to activate it.
 
-### `/nothanksona slack-import`
+### `/waldo slack-import`
 
 Generate a persona from Slack message samples.
 
 See the "Slack Import Flow" section below for full instructions.
 
-### `/nothanksona mood <description>`
+### `/waldo mood <description>`
 
 Apply a session-only mood overlay with natural language.
 
@@ -120,16 +120,16 @@ Examples: "make me sound happier", "pissed", "passive aggressive", "more concise
      }
    }
    ```
-4. Confirm: "Mood overlay applied: <description>. It's session-only — run `/nothanksona mood save` to make it permanent, or `/nothanksona mood reset` to clear it."
+4. Confirm: "Mood overlay applied: <description>. It's session-only — run `/waldo mood save` to make it permanent, or `/waldo mood reset` to clear it."
 
-### `/nothanksona mood reset`
+### `/waldo mood reset`
 
 Clear the active mood overlay.
 
 1. Delete `~/.claude/personas/.mood` if it exists.
 2. Confirm: "Mood overlay cleared. Back to base persona."
 
-### `/nothanksona mood save`
+### `/waldo mood save`
 
 Bake the active mood overlay permanently into the persona JSON.
 
@@ -140,31 +140,26 @@ Bake the active mood overlay permanently into the persona JSON.
 5. Delete `~/.claude/personas/.mood`.
 6. Confirm: "Mood saved to <persona-name>. It's now permanent (until you edit it again)."
 
-### `/nothanksona learn`
+### `/waldo learn`
 
-Analyze this session's patterns and record incremental deltas.
+Analyze this session's conversation patterns and suggest persona updates.
 
-1. **Review session context**: Look back at the user's prompts and your responses. Identify:
+1. **Review session context**: Look back at the user's prompts and your responses in this session. Identify:
    - Average message length (terse vs. long-form)
    - Use of slang, technical terms, humor, formality
    - Directness level (leading with conclusions vs. hedging)
    - Emoji or punctuation patterns
    - Topics and depth
-2. **Compare against active persona**: Load the active persona JSON and calculate deltas.
-3. **Record deltas** (don't update yet) to `~/.claude/personas/agent/.deltas` as JSONL:
-   ```json
-   {"timestamp": 1711428000, "type": "tone", "field": "humor", "old_value": 0.65, "new_value": 0.75, "reason": "more playful/sarcastic this session", "confidence": 0.8}
-   {"timestamp": 1711428000, "type": "tone", "field": "directness", "old_value": 0.85, "new_value": 0.9, "reason": "consistently leading with conclusions", "confidence": 0.9}
+2. **Compare against active persona**: Load the active persona JSON and analyze deltas.
+3. **Produce suggested updates** with reasoning. Example:
    ```
-4. Show suggested updates with confidence scores:
+   Suggested updates to waldo:
+   - humor: 0.65 → 0.75  (you've been more playful/sarcastic this session)
+   - directness: 0.85 → 0.9  (consistently leading with conclusions)
+   - response_length: concise → adaptive  (you asked several detailed questions)
    ```
-   Recorded deltas for nothanksona:
-   - humor: 0.65 → 0.75  (0.8 confidence: more playful/sarcastic this session)
-   - directness: 0.85 → 0.9  (0.9 confidence: consistently leading with conclusions)
-   - response_length: concise → adaptive  (0.7 confidence: you asked several detailed questions)
-   ```
-5. Ask: "Review deltas? (y/n) to accumulate and merge into persona. Older deltas decay over 30 days."
-6. On yes, run `/nothanksona learn --accumulate` to merge deltas into the base persona with decay weighting.
+4. Ask: "Apply these? (y/n) — or 'save as new <name>' to fork a new persona with these changes?"
+5. On yes, write updates to active persona JSON using Edit tool. On "save as new", create a new persona with these settings.
 
 ---
 
@@ -283,55 +278,10 @@ Ask: "What should I name this persona?" then write the file and optionally activ
 To verify the hook is injecting context correctly, run:
 
 ```bash
-echo '{"session_id":"test","prompt":"hello"}' | bash ~/.claude/hooks/nothanksona/inject-persona.sh
+echo '{"session_id":"test","prompt":"hello"}' | bash ~/.claude/hooks/waldo/inject-persona.sh
 ```
 
 Expected output shape:
 ```json
 {"continue": true, "hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": "..."}}
 ```
-
----
-
-## Code Domain (Beta)
-
-Manage and evolve coding style profiles alongside agent personas.
-
-### `/nothanksona code-scan <repo-path>`
-
-Auto-scan a repository for coding conventions.
-
-1. Run the quick code scanner: `bash ~/.claude/hooks/nothanksona/scan-code-style.sh <repo-path>`
-2. The scanner:
-   - Finds 10–20 code files (TS, JS, Python, Go, Rust, etc.)
-   - Respects `.gitignore` and skips node_modules/dist/build
-   - Extracts: indentation (spaces/tabs), naming conventions (camelCase/snake_case), line length, imports style, comment patterns, error handling, type hints
-3. Output saved to `~/.claude/personas/code/coding-style.json`
-4. Confirm: "Code style scanned and saved. Review with `/nothanksona code-style`"
-
-### `/nothanksona code-style`
-
-View or edit the current code style profile.
-
-1. Read `~/.claude/personas/code/coding-style.json`
-2. Pretty-print the profile — indentation, naming, line length, imports, comments, functions, error handling, types
-3. Ask: "Want to edit any of these? (run `/nothanksona edit code-style` to modify)"
-
-### `/nothanksona code-learn`
-
-Analyze code in this session and record incremental deltas.
-
-Same process as agent learn: capture deltas to `~/.claude/personas/code/.deltas`, record confidence scores, merge with decay.
-
-### `/nothanksona learn --accumulate` or `/nothanksona code --accumulate`
-
-Merge all recorded deltas into the active persona.
-
-1. Run the accumulate script: `bash ~/.claude/hooks/nothanksona/accumulate-deltas.sh agent nothanksona 30`
-2. Applies weighted averaging to tone/verbosity fields:
-   - Recent deltas (< 30 days) have higher weight
-   - Older deltas decay to 0 weight after 30 days
-   - Confidence scores influence the merge strength
-3. Backs up the original persona before merging
-4. Clears the deltas file after successful merge
-5. Confirm: "Persona updated. X deltas merged with decay weighting."

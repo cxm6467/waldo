@@ -1,10 +1,10 @@
 ---
-name: nothanksona
+name: waldo
 description: Manage Claude response personas — agent (tone, voice) and code (style, conventions). Subcommands: use, list, edit, export, import, slack-import, mood, learn (agent); code-scan, code-style (code). Use when switching personas, tweaking voice/tone, analyzing Slack, applying mood overlays, learning from session (agent), or scanning/viewing code style conventions (code).
 user_invocable: true
 ---
 
-# nothanksona
+# waldo
 
 Manage response personas that shape Claude's tone, verbosity, and voice style.
 
@@ -14,7 +14,7 @@ All personas live at `~/.claude/personas/<name>.json`. The active persona name i
 
 ## Subcommands
 
-### `/nothanksona use <name>`
+### `/waldo use <name>`
 
 Switch the active persona.
 
@@ -26,7 +26,7 @@ Switch the active persona.
    ```
 4. Confirm: "Persona switched to <name>. It will apply starting from your next message."
 
-### `/nothanksona list`
+### `/waldo list`
 
 List all available personas.
 
@@ -41,7 +41,7 @@ List all available personas.
    ```
 4. Present as a formatted list. Mark the active persona with `[active]`.
 
-### `/nothanksona new <name>`
+### `/waldo new <name>`
 
 Create a new persona interactively.
 
@@ -55,7 +55,7 @@ Create a new persona interactively.
 3. Write to `~/.claude/personas/<name>.json`.
 4. Ask if the user wants to activate it now.
 
-### `/nothanksona edit <name>`
+### `/waldo edit <name>`
 
 Edit an existing persona.
 
@@ -67,15 +67,15 @@ Edit an existing persona.
 3. Apply changes with the Edit tool (surgical field updates, not full rewrites).
 4. Confirm what changed.
 
-### `/nothanksona export <name>`
+### `/waldo export <name>`
 
 Export a persona to a shareable JSON snippet.
 
 1. Read `~/.claude/personas/<name>.json`.
 2. Print the full JSON contents in a code block so the user can copy it.
-3. Note: "You can share this with others. They can import it with `/nothanksona import`."
+3. Note: "You can share this with others. They can import it with `/waldo import`."
 
-### `/nothanksona import`
+### `/waldo import`
 
 Import a persona from JSON the user pastes.
 
@@ -86,13 +86,13 @@ Import a persona from JSON the user pastes.
 5. Write to `~/.claude/personas/<name>.json`.
 6. Confirm and ask if they want to activate it.
 
-### `/nothanksona slack-import`
+### `/waldo slack-import`
 
 Generate a persona from Slack message samples.
 
 See the "Slack Import Flow" section below for full instructions.
 
-### `/nothanksona mood <description>`
+### `/waldo mood <description>`
 
 Apply a session-only mood overlay with natural language.
 
@@ -120,16 +120,16 @@ Examples: "make me sound happier", "pissed", "passive aggressive", "more concise
      }
    }
    ```
-4. Confirm: "Mood overlay applied: <description>. It's session-only — run `/nothanksona mood save` to make it permanent, or `/nothanksona mood reset` to clear it."
+4. Confirm: "Mood overlay applied: <description>. It's session-only — run `/waldo mood save` to make it permanent, or `/waldo mood reset` to clear it."
 
-### `/nothanksona mood reset`
+### `/waldo mood reset`
 
 Clear the active mood overlay.
 
 1. Delete `~/.claude/personas/.mood` if it exists.
 2. Confirm: "Mood overlay cleared. Back to base persona."
 
-### `/nothanksona mood save`
+### `/waldo mood save`
 
 Bake the active mood overlay permanently into the persona JSON.
 
@@ -140,7 +140,7 @@ Bake the active mood overlay permanently into the persona JSON.
 5. Delete `~/.claude/personas/.mood`.
 6. Confirm: "Mood saved to <persona-name>. It's now permanent (until you edit it again)."
 
-### `/nothanksona learn`
+### `/waldo learn`
 
 Analyze this session's conversation patterns and suggest persona updates.
 
@@ -153,7 +153,7 @@ Analyze this session's conversation patterns and suggest persona updates.
 2. **Compare against active persona**: Load the active persona JSON and analyze deltas.
 3. **Produce suggested updates** with reasoning. Example:
    ```
-   Suggested updates to nothanksona:
+   Suggested updates to waldo:
    - humor: 0.65 → 0.75  (you've been more playful/sarcastic this session)
    - directness: 0.85 → 0.9  (consistently leading with conclusions)
    - response_length: concise → adaptive  (you asked several detailed questions)
@@ -278,7 +278,7 @@ Ask: "What should I name this persona?" then write the file and optionally activ
 To verify the hook is injecting context correctly, run:
 
 ```bash
-echo '{"session_id":"test","prompt":"hello"}' | bash ~/.claude/hooks/nothanksona/inject-persona.sh
+echo '{"session_id":"test","prompt":"hello"}' | bash ~/.claude/hooks/waldo/inject-persona.sh
 ```
 
 Expected output shape:
@@ -292,27 +292,27 @@ Expected output shape:
 
 Manage and evolve coding style profiles alongside agent personas.
 
-### `/nothanksona code-scan <repo-path>`
+### `/waldo code-scan <repo-path>`
 
 Auto-scan a repository for coding conventions.
 
-1. Run the quick code scanner: `bash ~/.claude/hooks/nothanksona/scan-code-style.sh <repo-path>`
+1. Run the quick code scanner: `bash ~/.claude/hooks/waldo/scan-code-style.sh <repo-path>`
 2. The scanner:
    - Finds 10–20 code files (TS, JS, Python, Go, Rust, etc.)
    - Respects `.gitignore` and skips node_modules/dist/build
    - Extracts: indentation (spaces/tabs), naming conventions (camelCase/snake_case), line length, imports style, comment patterns, error handling, type hints
 3. Output saved to `~/.claude/personas/code/coding-style.json`
-4. Confirm: "Code style scanned and saved. Review with `/nothanksona code-style`"
+4. Confirm: "Code style scanned and saved. Review with `/waldo code-style`"
 
-### `/nothanksona code-style`
+### `/waldo code-style`
 
 View or edit the current code style profile.
 
 1. Read `~/.claude/personas/code/coding-style.json`
 2. Pretty-print the profile — indentation, naming, line length, imports, comments, functions, error handling, types
-3. Ask: "Want to edit any of these? (run `/nothanksona edit code-style` to modify)"
+3. Ask: "Want to edit any of these? (run `/waldo edit code-style` to modify)"
 
-### `/nothanksona code-learn`
+### `/waldo code-learn`
 
 Analyze code in this session and suggest style updates.
 

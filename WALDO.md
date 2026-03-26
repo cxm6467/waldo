@@ -1,13 +1,13 @@
-# nothanksona — Claude Code Persona System
+# waldo — Claude Code Persona System
 
 A persistent persona/configuration system for Claude Code that shapes responses by tone, verbosity, and voice.
 
 ## What It Does
 
-**nothanksona** lets you:
+**waldo** lets you:
 - Create and manage response personas (pre-configured tone + voice profiles)
-- Switch personas on the fly with `/nothanksona use <name>`
-- Auto-generate personas from your Slack message samples with `/nothanksona slack-import`
+- Switch personas on the fly with `/waldo use <name>`
+- Auto-generate personas from your Slack message samples with `/waldo slack-import`
 - Export/import personas as JSON to share with others
 - Configure tone (formality, directness, humor, hedging, warmth)
 - Set verbosity preferences (concise/verbose, casual/professional, prose/bullets)
@@ -23,19 +23,19 @@ A persistent persona/configuration system for Claude Code that shapes responses 
 ### List available personas
 
 ```bash
-/nothanksona list
+/waldo list
 ```
 
 Output:
 ```
 default: Neutral, professional Claude default behavior. No special persona adjustments. [active]
-nothanksona: Chill, slightly snarky, self-aware. Doesn't take itself too seriously. Gets the job done without the corporate gloss.
+waldo: Chill, slightly snarky, self-aware. Doesn't take itself too seriously. Gets the job done without the corporate gloss.
 ```
 
 ### Switch personas
 
 ```bash
-/nothanksona use default
+/waldo use default
 ```
 
 Personas instantly affect all future responses in this session.
@@ -46,23 +46,23 @@ Check `~/.claude/personas/.active` to see which persona is active:
 
 ```bash
 cat ~/.claude/personas/.active
-# Output: nothanksona
+# Output: waldo
 ```
 
 Then inspect the persona JSON:
 
 ```bash
-cat ~/.claude/personas/nothanksona.json | jq .
+cat ~/.claude/personas/waldo.json | jq .
 ```
 
 ---
 
 ## Architecture
 
-- **`~/.claude/personas/*.json`** — Persona config files (default.json, nothanksona.json, custom ones you create)
+- **`~/.claude/personas/*.json`** — Persona config files (default.json, waldo.json, custom ones you create)
 - **`~/.claude/personas/.active`** — Plain text file pointing to the active persona name
-- **`~/.claude/hooks/nothanksona/inject-persona.sh`** — `UserPromptSubmit` hook that reads `.active` and injects persona context into every prompt
-- **`~/.claude/skills/nothanksona/SKILL.md`** — Slash command skill with subcommands (use, list, new, edit, export, import, slack-import)
+- **`~/.claude/hooks/waldo/inject-persona.sh`** — `UserPromptSubmit` hook that reads `.active` and injects persona context into every prompt
+- **`~/.claude/skills/waldo/SKILL.md`** — Slash command skill with subcommands (use, list, new, edit, export, import, slack-import)
 
 ---
 
@@ -73,7 +73,7 @@ cat ~/.claude/personas/nothanksona.json | jq .
   "meta": {
     "name": "slug-name",
     "description": "Human-readable description",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "created_at": "2026-03-26T00:00:00Z"
   },
   "tone": {
@@ -99,7 +99,7 @@ cat ~/.claude/personas/nothanksona.json | jq .
   "keyboard_shortcuts": {
     "note": "Documentation-only (no API yet)",
     "shortcuts": [
-      { "key": "ctrl+shift+p", "action": "Switch persona", "note": "/nothanksona use <name>" }
+      { "key": "ctrl+shift+p", "action": "Switch persona", "note": "/waldo use <name>" }
     ]
   },
   "voice": {
@@ -115,25 +115,25 @@ cat ~/.claude/personas/nothanksona.json | jq .
 
 ## Skill Subcommands
 
-### `/nothanksona list`
+### `/waldo list`
 List all personas, mark the active one.
 
-### `/nothanksona use <name>`
+### `/waldo use <name>`
 Switch to a different persona. The hook injects its context on your next message.
 
-### `/nothanksona new <name>`
+### `/waldo new <name>`
 Create a new persona interactively. Walk through tone, verbosity, and voice settings.
 
-### `/nothanksona edit <name>`
+### `/waldo edit <name>`
 Edit an existing persona. Modify individual fields.
 
-### `/nothanksona export <name>`
+### `/waldo export <name>`
 Export a persona as JSON for sharing.
 
-### `/nothanksona import`
+### `/waldo import`
 Paste a persona JSON to import it locally.
 
-### `/nothanksona slack-import`
+### `/waldo slack-import`
 Paste 10–15 of your own Slack messages. Claude analyzes your tone and auto-generates a persona JSON. Review and save.
 
 ---
@@ -146,7 +146,7 @@ Paste 10–15 of your own Slack messages. Claude analyzes your tone and auto-gen
 - Adaptive verbosity
 - Standard Claude behavior
 
-### `nothanksona`
+### `waldo`
 - Chill and slightly snarky
 - Low formality (0.2), high directness (0.85), moderate humor (0.65)
 - Concise responses, casual reading level, prose over bullets
@@ -161,8 +161,8 @@ Paste 10–15 of your own Slack messages. Claude analyzes your tone and auto-gen
 Every time you send a message:
 
 1. The `UserPromptSubmit` hook runs `inject-persona.sh`
-2. The hook reads `~/.claude/personas/.active` (e.g., `nothanksona`)
-3. It loads `~/.claude/personas/nothanksona.json`
+2. The hook reads `~/.claude/personas/.active` (e.g., `waldo`)
+3. It loads `~/.claude/personas/waldo.json`
 4. It converts the numeric tone values (0.0–1.0) to natural language descriptions
 5. It constructs a system-level `additionalContext` block
 6. It injects this context into the Claude Code prompt **before** the model sees it
@@ -176,7 +176,7 @@ Result: Claude's response follows the persona traits without needing explicit re
 ### Verify hook output
 
 ```bash
-echo '{"session_id":"test","prompt":"hi"}' | bash ~/.claude/hooks/nothanksona/inject-persona.sh | jq .
+echo '{"session_id":"test","prompt":"hi"}' | bash ~/.claude/hooks/waldo/inject-persona.sh | jq .
 ```
 
 Expected: Valid JSON with `continue: true` and `additionalContext` containing persona instructions.
@@ -193,10 +193,10 @@ cat ~/.claude/personas/.active
 In Claude Code:
 
 ```
-/nothanksona use default
+/waldo use default
 [Now in default tone]
 
-/nothanksona use nothanksona
+/waldo use waldo
 [Now in chill/snarky tone]
 ```
 
@@ -220,14 +220,14 @@ Notice the difference in how Claude responds — shorter answers, more casual la
 ```
 ~/.claude/personas/
   default.json
-  nothanksona.json
+  waldo.json
   .active
 
-~/.claude/hooks/nothanksona/
+~/.claude/hooks/waldo/
   inject-persona.sh
   inject-persona.log
 
-~/.claude/skills/nothanksona/
+~/.claude/skills/waldo/
   SKILL.md
 
 ~/.claude/settings.json
