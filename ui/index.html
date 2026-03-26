@@ -315,13 +315,23 @@
     </header>
 
     <div class="auth-section" v-if="!authenticated">
-      <h2>GitHub Authentication</h2>
-      <p style="margin-bottom: 10px; font-size: 13px;">
-        Paste a GitHub personal access token to read/write persona files.
-        <a href="https://github.com/settings/tokens/new?scopes=repo&description=waldo-ui" target="_blank">Create token →</a>
-      </p>
-      <input v-model="ghToken" type="password" placeholder="ghp_..." />
-      <button @click="authenticate">Authenticate</button>
+      <h2>Connect Services</h2>
+      <div style="margin-bottom: 20px;">
+        <p style="margin-bottom: 10px; font-size: 13px;">
+          <strong>GitHub:</strong> Read/write persona files
+          <a href="https://github.com/settings/tokens/new?scopes=repo&description=waldo-ui" target="_blank">Create token →</a>
+        </p>
+        <input v-model="ghToken" type="password" placeholder="ghp_..." />
+      </div>
+      <div>
+        <p style="margin-bottom: 10px; font-size: 13px;">
+          <strong>S3 (optional):</strong> Sync personas to S3 bucket
+        </p>
+        <input v-model="awsAccessKey" type="password" placeholder="AWS Access Key (optional)" />
+        <input v-model="awsSecretKey" type="password" placeholder="AWS Secret Key (optional)" />
+        <input v-model="s3Bucket" type="text" placeholder="S3 Bucket (optional)" />
+      </div>
+      <button @click="authenticate" style="margin-top: 10px;">Connect</button>
       <div v-if="message" :class="['status', message.type]">{{ message.text }}</div>
     </div>
 
@@ -443,6 +453,8 @@
       <div class="actions">
         <button class="btn btn-primary" @click="copyToClipboard">Copy JSON</button>
         <button class="btn btn-secondary" @click="downloadMeml">Download MEML</button>
+        <button class="btn btn-secondary" @click="loadFromMeml">Load MEML File</button>
+        <button class="btn btn-secondary" @click="saveTos3" v-if="awsAccessKey">Save to S3</button>
         <button class="btn btn-secondary" @click="logout">Logout</button>
       </div>
 
@@ -457,6 +469,9 @@
       setup() {
         const authenticated = ref(false);
         const ghToken = ref('');
+        const awsAccessKey = ref('');
+        const awsSecretKey = ref('');
+        const s3Bucket = ref('');
         const message = ref(null);
         const newAvoidWord = ref('');
         const newPreferWord = ref('');
@@ -504,18 +519,107 @@
 
         const authenticate = () => {
           if (!ghToken.value.startsWith('ghp_')) {
-            message.value = { type: 'error', text: 'Invalid token format' };
+            message.value = { type: 'error', text: 'Invalid GitHub token format' };
             return;
           }
           authenticated.value = true;
-          message.value = { type: 'success', text: 'Connected to GitHub' };
+          message.value = { type: 'success', text: 'Connected to GitHub' + (s3Bucket.value ? ' + S3' : '') };
           localStorage.setItem('gh_token', ghToken.value);
+          localStorage.setItem('aws_access_key', awsAccessKey.value);
+          localStorage.setItem('aws_secret_key', awsSecretKey.value);
+          localStorage.setItem('s3_bucket', s3Bucket.value);
+        };
+
+        const saveTos3 = async () => {
+          if (!s3Bucket.value || !awsAccessKey.value || !awsSecretKey.value) {
+            message.value = { type: 'error', text: 'S3 credentials incomplete' };
+            return;
+          }
+
+          try {
+            // Note: Real S3 upload requires backend. This is a placeholder.
+            // For now, users can copy JSON and manually upload via AWS CLI.
+            const json = JSON.stringify(persona.value, null, 2);
+            const filename = `${persona.value.meta.name}.json`;
+
+            message.value = {
+              type: 'info',
+              text: `Save JSON to S3 via AWS CLI:\naws s3 cp --acl public-read /tmp/${filename} s3://${s3Bucket.value}/personas/`
+            };
+
+            navigator.clipboard.writeText(json);
+          } catch (err) {
+            message.value = { type: 'error', text: `Error: ${err.message}` };
+          }
+        };
+
+        const loadFromMeml = async () => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.meml';
+          input.onchange = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              try {
+                const meml = event.target.result;
+                const parsed = parseMeml(meml);
+                Object.assign(persona.value, parsed);
+                message.value = { type: 'success', text: 'MEML loaded successfully' };
+              } catch (err) {
+                message.value = { type: 'error', text: `MEML parse error: ${err.message}` };
+              }
+            };
+            reader.readAsText(file);
+          };
+          input.click();
+        };
+
+        const parseMeml = (meml) => {
+          // Simple MEML parser for basic persona format
+          const result = { meta: {}, tone: {}, verbosity: {}, voice: {} };
+          let section = null;
+
+          meml.split('\n').forEach(line => {
+            line = line.trim();
+            if (!line || line.startsWith('#')) return;
+
+            if (line.startsWith('[')) {
+              section = line.match(/\[(.*?)\]/)?.[1]?.replace(/^[^a-z]/, '') || null;
+              return;
+            }
+
+            const [key, ...valueParts] = line.split('=');
+            if (!key || !valueParts.length) return;
+
+            const k = key.trim().replace(/^[^a-z0-9]/g, '');
+            let v = valueParts.join('=').trim();
+
+            // Parse value
+            if (v === '✅' || v === 'true') v = true;
+            else if (v === '❌' || v === 'false') v = false;
+            else if (!isNaN(v) && v !== '') v = parseFloat(v);
+            else if (v.startsWith('[')) v = JSON.parse(v);
+            else if (v.startsWith('"') || v.startsWith("'")) v = v.slice(1, -1);
+
+            if (section && result[section]) {
+              result[section][k] = v;
+            }
+          });
+
+          return result;
         };
 
         const logout = () => {
           authenticated.value = false;
           ghToken.value = '';
+          awsAccessKey.value = '';
+          awsSecretKey.value = '';
+          s3Bucket.value = '';
           localStorage.removeItem('gh_token');
+          localStorage.removeItem('aws_access_key');
+          localStorage.removeItem('aws_secret_key');
+          localStorage.removeItem('s3_bucket');
           message.value = null;
         };
 
@@ -600,12 +704,18 @@
         // Load from localStorage on mount
         if (localStorage.getItem('gh_token')) {
           ghToken.value = localStorage.getItem('gh_token');
+          awsAccessKey.value = localStorage.getItem('aws_access_key') || '';
+          awsSecretKey.value = localStorage.getItem('aws_secret_key') || '';
+          s3Bucket.value = localStorage.getItem('s3_bucket') || '';
           authenticate();
         }
 
         return {
           authenticated,
           ghToken,
+          awsAccessKey,
+          awsSecretKey,
+          s3Bucket,
           message,
           persona,
           previewJson,
@@ -622,7 +732,9 @@
           addPhrase,
           removePhrase,
           copyToClipboard,
-          downloadMeml
+          downloadMeml,
+          saveTos3,
+          loadFromMeml
         };
       }
     }).mount('#app');
