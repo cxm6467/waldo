@@ -262,7 +262,8 @@ Ask: "What should I name this persona?" then write the file and optionally activ
     "custom_phrases": "array of strings — use occasionally, not every message",
     "avoid_words":    "array of strings — never use these",
     "prefer_words":   "array of strings — use these over synonyms",
-    "sign_off":       "string or null"
+    "sign_off":       "string or null",
+    "attribution":    "boolean — include AI agent attribution (default: false)"
   }
 }
 ```
