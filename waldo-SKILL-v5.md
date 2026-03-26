@@ -436,3 +436,54 @@ A counter tracks messages per session. At 50 messages (configurable), you'll see
 
 This is optional — learning only happens on demand. Counter resets at SessionStart.
 
+---
+
+## Status Line Integration (Agent Agnostic)
+
+The `status-line.sh` hook displays your active persona in editor status bars — works across all tools.
+
+**Supported:**
+- **Claude Code** — via `~/.claude/settings.json` hook
+- **Cursor** — via workspace status bar
+- **VS Code** — via status bar extension API
+- **Terminal** — via custom PS1 prompt
+
+**Output format:** `waldo: chris-marasco [mood]`
+
+Shows:
+- Current active persona name (short form, no `agent/` prefix)
+- `[mood]` badge if session mood overlay is active
+- Updates in real-time as you switch personas
+
+**Setup in Claude Code:**
+
+Add to `~/.claude/settings.json`:
+```json
+{
+  "hooks": {
+    "SessionStart": "Bash(bash ~/.claude/hooks/waldo/status-line.sh > /tmp/waldo-status.txt)"
+  }
+}
+```
+
+Then display in your prompt or tool output.
+
+---
+
+## Emoji Configuration (Optional)
+
+Personas can include sparse, configurable emoji use:
+
+```meml
+[😊 emoji]
+enabled           = ✅           # Enable emoji in responses
+frequency         = "sparse"     # sparse | moderate | frequent
+contexts          = ["emphasis", "mood", "transitions"]
+```
+
+- **sparse** — 0–2 emoji per response, only for emphasis
+- **moderate** — 2–5 emoji, for mood + transitions
+- **frequent** — 5+ emoji, liberal use
+
+Hook respects the config and injects hint into persona context. Claude decides emoji use based on context and persona intent.
+

@@ -240,6 +240,7 @@ MIT
 **Full docs:**
 - [Setup Guide](./WALDO-SETUP.md)
 - [Skill Reference](./waldo-SKILL-v5.md)
+- [MEML Format Guide](./MEML.md) — How to write personas
 - [Quick Start](./QUICK-START.md)
 - [DEMO](./DEMO.md)
 
