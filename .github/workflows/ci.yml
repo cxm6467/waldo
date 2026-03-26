@@ -35,4 +35,4 @@ jobs:
 
       - name: Check shell scripts
         run: |
-          shellcheck setup-waldo.sh .claude/hooks/waldo/*.sh || true
+          shellcheck setup-waldo.sh .claude/hooks/waldo/*.sh
