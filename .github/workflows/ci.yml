@@ -38,13 +38,16 @@ jobs:
         run: |
           shellcheck setup-waldo.sh .claude/hooks/waldo/*.sh || true
 
-      - name: Check for nothanksona references
+      - name: Check for old naming
         run: |
-          if grep -r "nothanksona" . --include="*.md" --include="*.sh" --include="*.json" --include="*.meml" 2>/dev/null | grep -v ".git" | grep -v "node_modules"; then
-            echo "❌ Found nothanksona references"
+          # Use variable to avoid grep finding itself
+          OLDNAME="not"
+          OLDNAME="${OLDNAME}hanksona"
+          if grep -r "$OLDNAME" . --include="*.md" --include="*.sh" --include="*.json" --include="*.meml" 2>/dev/null | grep -v ".git" | grep -v "node_modules"; then
+            echo "❌ Found old naming"
             exit 1
           fi
-          echo "✓ No nothanksona references"
+          echo "✓ All renamed to waldo"
 
   build:
     name: Build
