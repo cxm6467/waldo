@@ -18,6 +18,8 @@ Works with **Claude Code**, **Cursor**, **ChatGPT**, **Gemini**, and **Codeium**
 
 ## Quick Start
 
+**Try it first:** Visit the [interactive playground](https://caboose-mcp.github.io/waldo/ui/playground.html) — adjust tone sliders, see ChatGPT/Gemini prompts update in real-time, no installation needed.
+
 ```bash
 # Install
 curl -fsSL https://raw.githubusercontent.com/caboose-mcp/waldo/main/setup-waldo.sh | bash
