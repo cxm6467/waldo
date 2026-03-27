@@ -21,7 +21,7 @@ left run pre-commit
 
 - **MEML validation** — `meml validate *.meml`
 - **Shell linting** — `shellcheck *.sh`
-- **No nothanksona refs** — blocks commits with old naming
+- **No old naming refs** — blocks commits with legacy system name
 - **Markdown lint** — warns on style issues
 
 ### Running checks manually
