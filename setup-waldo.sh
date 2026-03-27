@@ -177,7 +177,7 @@ if [[ $SETUP_S3 =~ ^[Yy]$ ]]; then
     echo "Your S3 buckets:"
     select BUCKET in $EXISTING "Create new bucket"; do
       if [ "$BUCKET" = "Create new bucket" ]; then
-        read -p "  New bucket name: " NEW_BUCKET
+        read -rp "  New bucket name: " NEW_BUCKET
         if aws s3api create-bucket --bucket "$NEW_BUCKET" --region us-east-1 2>/dev/null; then
           BUCKET="$NEW_BUCKET"
           echo -e "  ${GREEN}✓ Bucket created: ${BUCKET}${NC}"
@@ -192,7 +192,7 @@ if [[ $SETUP_S3 =~ ^[Yy]$ ]]; then
       fi
     done
   else
-    read -p "  New bucket name (e.g., my-personas): " BUCKET
+    read -rp "  New bucket name (e.g., my-personas): " BUCKET
     if aws s3api create-bucket --bucket "$BUCKET" --region us-east-1 2>/dev/null; then
       echo -e "  ${GREEN}✓ Bucket created: ${BUCKET}${NC}"
     else
@@ -203,7 +203,7 @@ if [[ $SETUP_S3 =~ ^[Yy]$ ]]; then
 
   if [[ $SETUP_S3 =~ ^[Yy]$ ]]; then
     echo
-    read -p "  AWS profile (default: default): " AWS_PROFILE
+    read -rp "  AWS profile (default: default): " AWS_PROFILE
     AWS_PROFILE="${AWS_PROFILE:-default}"
 
     # Update settings.json

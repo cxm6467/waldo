@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>waldo — Persona Config</title>
+  <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    #app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .auth-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .auth-section input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .auth-section button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .auth-section button:hover {
+      background: #0052a3;
+    }
+
+    .containers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #0066cc;
+      padding-bottom: 10px;
+    }
+
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    input[type="number"] {
+      max-width: 100px;
+    }
+
+    .slider-group {
+      margin-bottom: 15px;
+    }
+
+    .slider-group label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #ddd;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0066cc;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0066cc;
+      cursor: pointer;
+      border: none;
+    }
+
+    .emoji-hint {
+      font-size: 11px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .array-input {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .array-input input {
+      flex: 1;
+    }
+
+    .array-input button {
+      padding: 6px 12px;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .array-input button:hover {
+      background: #e0e0e0;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      background: #e8f1ff;
+      border: 1px solid #0066cc;
+      color: #0066cc;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag button {
+      background: none;
+      border: none;
+      color: #0066cc;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .preview {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .preview h2 {
+      margin-top: 0;
+    }
+
+    .preview-content {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #0066cc;
+      font-family: "Monaco", "Menlo", monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: #0066cc;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0052a3;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .status {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    @media (max-width: 768px) {
+      .containers {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🎭 waldo — Persona Config</h1>
+      <p>Edit personas visually. Sync to GitHub via API.</p>
+    </header>
+
+    <div class="auth-section">
+      <h2>GitHub Sync <span style="font-size: 12px; font-weight: normal; color: #888;">(optional — not required for local editing)</span></h2>
+      <div v-if="!authenticated">
+        <p style="margin-bottom: 10px; font-size: 13px;">
+          <strong>GitHub:</strong> Provide a token to enable saving personas to GitHub. Use a
+          <a href="https://github.com/settings/tokens/new?description=waldo-ui" target="_blank" rel="noopener noreferrer">fine-grained PAT</a>
+          with the minimum repository permissions needed.
+          Tokens are stored only for the current browser session and cleared when you close the tab.
+        </p>
+        <input v-model="ghToken" type="password" placeholder="ghp_... or github_pat_..." style="max-width:400px;" />
+        <div>
+          <p style="margin-bottom: 10px; margin-top: 10px; font-size: 13px;">
+            <strong>S3 (optional):</strong> Sync personas to S3 bucket
+          </p>
+          <input v-model="awsAccessKey" type="password" placeholder="AWS Access Key (optional)" />
+          <input v-model="awsSecretKey" type="password" placeholder="AWS Secret Key (optional)" />
+          <input v-model="s3Bucket" type="text" placeholder="S3 Bucket (optional)" />
+        </div>
+        <button @click="authenticate" style="margin-top: 10px;">Connect</button>
+      </div>
+      <div v-else>
+        <div class="status success" style="display:inline-block; margin-right: 10px;">✓ Connected to GitHub</div>
+        <button @click="logout" class="btn btn-secondary" style="font-size: 13px; padding: 5px 12px;">Disconnect</button>
+      </div>
+      <div v-if="message" :class="['status', message.type]">{{ message.text }}</div>
+    </div>
+
+    <div>
+      <div class="containers">
+        <div class="container">
+          <h2>Meta</h2>
+          <div class="field-group">
+            <label>Name</label>
+            <input v-model="persona.meta.name" type="text" />
+          </div>
+          <div class="field-group">
+            <label>Description</label>
+            <input v-model="persona.meta.description" type="text" />
+          </div>
+          <div class="field-group">
+            <label>Version</label>
+            <input v-model="persona.meta.version" type="text" placeholder="0.1.0" />
+          </div>
+
+          <h2 style="margin-top: 30px;">Tone</h2>
+          <div class="slider-group" v-for="(val, key) in persona.tone" :key="key">
+            <label>
+              {{ key }}
+              <span>{{ val.toFixed(2) }}</span>
+            </label>
+            <input v-model.number="persona.tone[key]" type="range" min="0" max="1" step="0.01" />
+            <div class="emoji-hint">{{ toneHints[key] }}</div>
+          </div>
+        </div>
+
+        <div class="container">
+          <h2>Verbosity</h2>
+          <div class="field-group">
+            <label>Response Length</label>
+            <select v-model="persona.verbosity.response_length">
+              <option>concise</option>
+              <option>adaptive</option>
+              <option>verbose</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Reading Level</label>
+            <select v-model="persona.verbosity.reading_level">
+              <option>casual</option>
+              <option>professional</option>
+              <option>technical</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Format Preference</label>
+            <select v-model="persona.verbosity.format_preference">
+              <option>prose</option>
+              <option>bullets</option>
+              <option>adaptive</option>
+            </select>
+          </div>
+
+          <h2 style="margin-top: 30px;">Voice</h2>
+          <div class="field-group">
+            <label>Avoid Words</label>
+            <div class="array-input">
+              <input v-model="newAvoidWord" @keyup.enter="addAvoidWord" type="text" placeholder="Type and press Enter" />
+              <button @click="addAvoidWord">Add</button>
+            </div>
+            <div class="tags">
+              <div class="tag" v-for="word in persona.voice.avoid_words" :key="word">
+                {{ word }}
+                <button @click="removeAvoidWord(word)" :aria-label="'Remove avoid word: ' + word">×</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Prefer Words</label>
+            <div class="array-input">
+              <input v-model="newPreferWord" @keyup.enter="addPreferWord" type="text" placeholder="Type and press Enter" />
+              <button @click="addPreferWord">Add</button>
+            </div>
+            <div class="tags">
+              <div class="tag" v-for="word in persona.voice.prefer_words" :key="word">
+                {{ word }}
+                <button @click="removePreferWord(word)" :aria-label="'Remove prefer word: ' + word">×</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Custom Phrases</label>
+            <div class="array-input">
+              <input v-model="newPhrase" @keyup.enter="addPhrase" type="text" placeholder="Type and press Enter" />
+              <button @click="addPhrase">Add</button>
+            </div>
+            <div class="tags">
+              <div class="tag" v-for="phrase in persona.voice.custom_phrases" :key="phrase">
+                {{ phrase }}
+                <button @click="removePhrase(phrase)" :aria-label="'Remove phrase: ' + phrase">×</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Attribution</label>
+            <select v-model="persona.voice.attribution">
+              <option :value="false">No (default)</option>
+              <option :value="true">Yes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview">
+        <h2>Preview</h2>
+        <div class="preview-content">{{ previewJson }}</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" @click="copyToClipboard">Copy JSON</button>
+        <button class="btn btn-secondary" @click="downloadMeml">Download MEML</button>
+        <button class="btn btn-secondary" @click="loadFromMeml">Load MEML File</button>
+        <button class="btn btn-secondary" @click="saveTos3" v-if="awsAccessKey && authenticated">Save to S3</button>
+      </div>
+
+      <div v-if="message" :class="['status', message.type]">{{ message.text }}</div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, computed, onMounted } = Vue;
+
+    createApp({
+      setup() {
+        const authenticated = ref(false);
+        const ghToken = ref('');
+        const awsAccessKey = ref('');
+        const awsSecretKey = ref('');
+        const s3Bucket = ref('');
+        const message = ref(null);
+        const newAvoidWord = ref('');
+        const newPreferWord = ref('');
+        const newPhrase = ref('');
+
+        const persona = ref({
+          meta: {
+            name: 'my-voice',
+            description: 'Casual, direct, no corporate speak',
+            version: '0.1.0',
+            created_at: new Date().toISOString()
+          },
+          tone: {
+            formality: 0.3,
+            directness: 0.8,
+            humor: 0.6,
+            hedging: 0.1,
+            warmth: 0.5
+          },
+          verbosity: {
+            response_length: 'concise',
+            reading_level: 'casual',
+            format_preference: 'prose',
+            bullet_threshold: 'only_when_truly_a_list'
+          },
+          voice: {
+            avoid_words: ['certainly', 'leverage', 'utilize'],
+            prefer_words: ['use', 'build', 'fix'],
+            custom_phrases: ['yea', 'here\'s the deal'],
+            attribution: false
+          }
+        });
+
+        const toneHints = {
+          formality: '0 = casual, 1 = formal',
+          directness: '0 = roundabout, 1 = blunt',
+          humor: '0 = dry, 1 = frequent wit',
+          hedging: '0 = confident, 1 = heavily qualified',
+          warmth: '0 = cold, 1 = enthusiastic'
+        };
+
+        const previewJson = computed(() => {
+          return JSON.stringify(persona.value, null, 2);
+        });
+
+        const authenticate = async () => {
+          if (!ghToken.value.startsWith('ghp_') && !ghToken.value.startsWith('github_pat_')) {
+            message.value = { type: 'error', text: 'Invalid GitHub token format. Expected ghp_... or github_pat_...' };
+            return;
+          }
+          message.value = { type: 'info', text: 'Verifying token…' };
+          try {
+            const res = await fetch('https://api.github.com/user', {
+              headers: { Authorization: `token ${ghToken.value}` }
+            });
+            if (!res.ok) {
+              message.value = { type: 'error', text: `GitHub token verification failed (${res.status})` };
+              return;
+            }
+            authenticated.value = true;
+            message.value = { type: 'success', text: 'Connected to GitHub' + (s3Bucket.value ? ' + S3' : '') };
+            sessionStorage.setItem('gh_token', ghToken.value);
+            sessionStorage.setItem('aws_access_key', awsAccessKey.value);
+            sessionStorage.setItem('aws_secret_key', awsSecretKey.value);
+            sessionStorage.setItem('s3_bucket', s3Bucket.value);
+          } catch (err) {
+            message.value = { type: 'error', text: `Could not reach GitHub API: ${err.message}` };
+          }
+        };
+
+        const saveTos3 = async () => {
+          if (!s3Bucket.value || !awsAccessKey.value || !awsSecretKey.value) {
+            message.value = { type: 'error', text: 'S3 credentials incomplete' };
+            return;
+          }
+
+          try {
+            // Note: Real S3 upload requires backend. This is a placeholder.
+            // For now, users can copy JSON and manually upload via AWS CLI.
+            const json = JSON.stringify(persona.value, null, 2);
+            const filename = `${persona.value.meta.name}.json`;
+
+            message.value = {
+              type: 'info',
+              text: `Save JSON to S3 via AWS CLI:\naws s3 cp --acl public-read /tmp/${filename} s3://${s3Bucket.value}/personas/`
+            };
+
+            navigator.clipboard.writeText(json).catch(() => {
+              message.value = { type: 'error', text: 'Clipboard access denied. Copy the JSON from the preview manually.' };
+            });
+          } catch (err) {
+            message.value = { type: 'error', text: `Error: ${err.message}` };
+          }
+        };
+
+        const loadFromMeml = async () => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.meml';
+          input.onchange = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              try {
+                const meml = event.target.result;
+                const parsed = parseMeml(meml);
+                Object.assign(persona.value, parsed);
+                message.value = { type: 'success', text: 'MEML loaded successfully' };
+              } catch (err) {
+                message.value = { type: 'error', text: `MEML parse error: ${err.message}` };
+              }
+            };
+            reader.readAsText(file);
+          };
+          input.click();
+        };
+
+        const parseMeml = (meml) => {
+          // Simple MEML parser for basic persona format
+          const result = { meta: {}, tone: {}, verbosity: {}, voice: {} };
+          let section = null;
+
+          meml.split('\n').forEach(line => {
+            line = line.trim();
+            if (!line || line.startsWith('#')) return;
+
+            if (line.startsWith('[')) {
+              section = line.match(/\[(.*?)\]/)?.[1]?.replace(/^[^a-z]/, '') || null;
+              return;
+            }
+
+            const [key, ...valueParts] = line.split('=');
+            if (!key || !valueParts.length) return;
+
+            const k = key.trim().replace(/^[^a-z0-9]/g, '');
+            let v = valueParts.join('=').trim();
+
+            // Parse value
+            if (v === '✅' || v === 'true') v = true;
+            else if (v === '❌' || v === 'false') v = false;
+            else if (!isNaN(v) && v !== '') v = parseFloat(v);
+            else if (v.startsWith('[')) v = JSON.parse(v);
+            else if (v.startsWith('"') || v.startsWith("'")) v = v.slice(1, -1);
+
+            if (section && result[section]) {
+              result[section][k] = v;
+            }
+          });
+
+          return result;
+        };
+
+        const logout = () => {
+          authenticated.value = false;
+          ghToken.value = '';
+          awsAccessKey.value = '';
+          awsSecretKey.value = '';
+          s3Bucket.value = '';
+          sessionStorage.removeItem('gh_token');
+          sessionStorage.removeItem('aws_access_key');
+          sessionStorage.removeItem('aws_secret_key');
+          sessionStorage.removeItem('s3_bucket');
+          message.value = null;
+        };
+
+        const removeFromArray = (arr, item) => {
+          const idx = arr.indexOf(item);
+          if (idx !== -1) arr.splice(idx, 1);
+        };
+
+        const addAvoidWord = () => {
+          const w = newAvoidWord.value.trim();
+          if (w && !persona.value.voice.avoid_words.includes(w)) {
+            persona.value.voice.avoid_words.push(w);
+            newAvoidWord.value = '';
+          }
+        };
+
+        const removeAvoidWord = (word) => removeFromArray(persona.value.voice.avoid_words, word);
+
+        const addPreferWord = () => {
+          const w = newPreferWord.value.trim();
+          if (w && !persona.value.voice.prefer_words.includes(w)) {
+            persona.value.voice.prefer_words.push(w);
+            newPreferWord.value = '';
+          }
+        };
+
+        const removePreferWord = (word) => removeFromArray(persona.value.voice.prefer_words, word);
+
+        const addPhrase = () => {
+          const p = newPhrase.value.trim();
+          if (p && !persona.value.voice.custom_phrases.includes(p)) {
+            persona.value.voice.custom_phrases.push(p);
+            newPhrase.value = '';
+          }
+        };
+
+        const removePhrase = (phrase) => removeFromArray(persona.value.voice.custom_phrases, phrase);
+
+        const copyToClipboard = () => {
+          navigator.clipboard.writeText(previewJson.value).then(() => {
+            message.value = { type: 'success', text: 'JSON copied to clipboard' };
+            setTimeout(() => message.value = null, 3000);
+          }).catch(() => {
+            message.value = { type: 'error', text: 'Clipboard access denied. Select and copy the JSON from the preview manually.' };
+          });
+        };
+
+        const downloadMeml = () => {
+          const meml = toMeml(persona.value);
+          const blob = new Blob([meml], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${persona.value.meta.name}.meml`;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 100);
+        };
+
+        const escapeMemlString = (str) => {
+          return String(str)
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r')
+            .replace(/\t/g, '\\t')
+            .replace(/\f/g, '\\f')
+            .replace(/\b/g, '\\b')
+            .replace(/[\x00-\x08\x0b\x0e-\x1f\x7f]/g, (c) =>
+              `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`
+            );
+        };
+
+        const toMeml = (p) => {
+          let meml = `# ${p.meta.name} persona\n\n`;
+          meml += `[🪪 meta]\n`;
+          meml += `name        = "${escapeMemlString(p.meta.name)}"\n`;
+          meml += `description = "${escapeMemlString(p.meta.description)}"\n`;
+          meml += `version     = "${escapeMemlString(p.meta.version)}"\n`;
+          meml += `created_at  = "${escapeMemlString(p.meta.created_at)}"\n\n`;
+
+          meml += `[🎭 tone]\n`;
+          for (const [k, v] of Object.entries(p.tone)) {
+            meml += `${k} = ${v}\n`;
+          }
+
+          meml += `\n[📢 verbosity]\n`;
+          for (const [k, v] of Object.entries(p.verbosity)) {
+            meml += `${k} = "${escapeMemlString(v)}"\n`;
+          }
+
+          meml += `\n[🗣️ voice]\n`;
+          meml += `avoid_words    = [${p.voice.avoid_words.map(w => `"${escapeMemlString(w)}"`).join(', ')}]\n`;
+          meml += `prefer_words   = [${p.voice.prefer_words.map(w => `"${escapeMemlString(w)}"`).join(', ')}]\n`;
+          meml += `custom_phrases = [${p.voice.custom_phrases.map(w => `"${escapeMemlString(w)}"`).join(', ')}]\n`;
+          meml += `attribution    = ${p.voice.attribution ? '✅' : '❌'}\n`;
+
+          return meml;
+        };
+
+        // Restore session credentials and re-verify token (sessionStorage — cleared when tab is closed)
+        onMounted(async () => {
+          if (sessionStorage.getItem('gh_token')) {
+            ghToken.value = sessionStorage.getItem('gh_token');
+            awsAccessKey.value = sessionStorage.getItem('aws_access_key') || '';
+            awsSecretKey.value = sessionStorage.getItem('aws_secret_key') || '';
+            s3Bucket.value = sessionStorage.getItem('s3_bucket') || '';
+            await authenticate();
+          }
+        });
+
+        return {
+          authenticated,
+          ghToken,
+          awsAccessKey,
+          awsSecretKey,
+          s3Bucket,
+          message,
+          persona,
+          previewJson,
+          newAvoidWord,
+          newPreferWord,
+          newPhrase,
+          toneHints,
+          authenticate,
+          logout,
+          addAvoidWord,
+          removeAvoidWord,
+          addPreferWord,
+          removePreferWord,
+          addPhrase,
+          removePhrase,
+          copyToClipboard,
+          downloadMeml,
+          saveTos3,
+          loadFromMeml
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
