@@ -33,7 +33,7 @@ discord_online          = ✅            # bot is connected
 github_api_ok           = ✅            # latest commit succeeded
 n8n_workflows_healthy   = ✅            # workflows are running
 
-[⏰ schedule_override]
+[schedule_override]
 # Can be set to pause/resume normal schedule
 pause_questions         = ❌            # ❌ = run normally, ✅ = pause daily Q generation
 next_question_time      = ~             # override next question time (if paused)

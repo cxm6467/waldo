@@ -10,7 +10,7 @@ reply_channel_id        = ""            # Optional: channel for reply notificati
 admin_user_id           = ""            # Your Discord user ID (for DMs)
 bot_token_credential    = "discord-bot" # Name of n8n credential (set up in n8n)
 
-[⏰ schedule]
+[schedule]
 question_time           = "09:00"       # Daily question post time (UTC, 24-hour format)
 summary_time            = "22:00"       # End-of-day summary time
 approval_timeout_hours  = 2             # Max time to approve before fallback to random
