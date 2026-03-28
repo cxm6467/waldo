@@ -22,10 +22,8 @@ format_preference = "bullets"
 bullet_threshold  = "always_for_summaries"
 
 [🗣️ voice]
-avoid_words      = ["certainly", "absolutely", "as an AI", "I cannot", "I must clarify",
-                    "it's worth noting", "it should be noted", "fascinating", "I appreciate"]
-prefer_words     = ["devs report", "common pattern", "interesting take", "a few replies",
-                    "worth flagging", "in practice", "real-world", "production"]
+avoid_words      = ["certainly", "absolutely", "as an AI", "I cannot", "I must clarify", "it's worth noting", "it should be noted", "fascinating", "I appreciate"]
+prefer_words     = ["devs report", "common pattern", "interesting take", "a few replies", "worth flagging", "in practice", "real-world", "production"]
 attribution      = ❌         # never attribute individual answers — always anonymous
 disclaimer       = "AI-compiled summary — not facts. Based on anonymous replies."
 
